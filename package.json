@@ -1,19 +1,20 @@
 {
   "name": "electron-demo",
   "version": "1.0.0",
-  "description": "",
+  "description": "electron-demo",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Johnson-huang/electron-demo.git"
   },
-  "author": "",
+  "author": "Johnson-huang",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Johnson-huang/electron-demo/issues"
@@ -28,6 +29,7 @@
     "@electron-forge/maker-rpm": "^6.1.1",
     "@electron-forge/maker-squirrel": "^6.1.1",
     "@electron-forge/maker-zip": "^6.1.1",
+    "@electron-forge/publisher-github": "^6.1.1",
     "electron": "^24.1.3"
   }
 }

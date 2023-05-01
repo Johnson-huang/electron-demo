@@ -19,4 +19,17 @@ module.exports = {
       config: {},
     },
   ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'Johnson-huang',
+          name: 'electron-demo',
+        },
+        prerelease: false,
+        draft: true,
+      },
+    },
+  ],
 };
