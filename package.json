@@ -1,0 +1,23 @@
+{
+  "name": "electron-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Johnson-huang/electron-demo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Johnson-huang/electron-demo/issues"
+  },
+  "homepage": "https://github.com/Johnson-huang/electron-demo#readme",
+  "dependencies": {
+    "electron": "^24.1.3"
+  }
+}
