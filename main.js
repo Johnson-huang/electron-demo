@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path');
+const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
 
 // 检测更新程序代码
 require('update-electron-app')()
@@ -19,7 +20,12 @@ const createWindow = () => {
 // 通常我们使用触发器的 .on 函数来监听 Node.js 事件。
 // 但是 Electron 暴露了 app.whenReady() 方法，作为其 ready 事件的专用监听器，这样可以避免直接监听 .on 事件带来的一些问题
 // 参见 electron/electron#21972 。
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+    // electron-devtools-installer 插件面板
+    await installExtension(REACT_DEVELOPER_TOOLS)
+        .then((name) => console.log(`Added Extension:  ${name}`))
+        .catch((err) => console.log('An error occurred: ', err));
+
     createWindow()
 
     // 即使没有打开任何窗口，macOS 应用通常也会继续运行
