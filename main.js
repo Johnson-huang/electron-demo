@@ -1,20 +1,24 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path');
-const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
+// const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
+const isDev = require('electron-is-dev');
 
 // 检测更新程序代码
-require('update-electron-app')()
+// require('update-electron-app')()
 
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-        },
+        // webPreferences: {
+        //     preload: path.join(__dirname, 'preload.js'),
+        // },
     })
-    ipcMain.handle('ping', () => 'pong')
-    win.loadFile('index.html')
+
+    // 判断开发环境
+    const urlLocation = isDev ? 'http://localhost:3000' : 'https://baidu.com';
+    // ipcMain.handle('ping', () => 'pong')
+    win.loadURL(urlLocation);
 }
 
 // 通常我们使用触发器的 .on 函数来监听 Node.js 事件。
@@ -22,9 +26,9 @@ const createWindow = () => {
 // 参见 electron/electron#21972 。
 app.whenReady().then(async () => {
     // electron-devtools-installer 插件面板
-    await installExtension(REACT_DEVELOPER_TOOLS)
-        .then((name) => console.log(`Added Extension:  ${name}`))
-        .catch((err) => console.log('An error occurred: ', err));
+    // await installExtension(REACT_DEVELOPER_TOOLS)
+    //     .then((name) => console.log(`Added Extension:  ${name}`))
+    //     .catch((err) => console.log('An error occurred: ', err));
 
     createWindow()
 
