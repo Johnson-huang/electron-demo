@@ -11,3 +11,7 @@
 - wait-on：命令联动，同步串行执行
 - cross-env：跨平台设置环境变量
 - nodemon：nodejs 代码热更新
+
+## 第三方库
+- bootstrap
+- fontawesome：svg 库
