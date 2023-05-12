@@ -1,4 +1,4 @@
-# Electron + React（v18）
+# Electron（v24） + React（v18）
 ## 技术栈
 - Electron v24
 - React v18

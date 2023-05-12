@@ -1,26 +1,31 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
+/**
+ * 监听 keyup keydown 事件，如果为 targetKeyCode 则设置是否触发点击 true false
+ * @param targetKeyCode
+ * @return {boolean}
+ */
 const useKeyPress = (targetKeyCode) => {
   const [keyPressed, setKeyPressed] = useState(false)
-  
-  const keyDownHandler = ({ keyCode }) => {
+
+  const keyDownHandler = useCallback(({ keyCode }) => {
     if(keyCode === targetKeyCode) {
       setKeyPressed(true)
     }
-  }
-  const keyUpHandler = ({ keyCode }) => {
+  }, [targetKeyCode])
+  const keyUpHandler = useCallback(({ keyCode }) => {
     if(keyCode === targetKeyCode) {
       setKeyPressed(false)
     }
-  }
+  }, [targetKeyCode])
   useEffect(() => {
     document.addEventListener('keydown', keyDownHandler)
     document.addEventListener('keyup', keyUpHandler)
     return () => {
       document.removeEventListener('keydown', keyDownHandler)
-      document.removeEventListener('keyup', keyUpHandler)     
+      document.removeEventListener('keyup', keyUpHandler)
     }
-  }, [])
+  }, [keyDownHandler, keyUpHandler])
   return keyPressed
 }
 

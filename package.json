@@ -47,6 +47,7 @@
     "cross-env": "^7.0.3",
     "electron": "^24.3.0",
     "electron-is-dev": "^2.0.0",
+    "prop-types": "^15.8.1",
     "wait-on": "^7.0.1"
   }
 }

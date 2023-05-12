@@ -1,7 +1,10 @@
 import { useEffect } from 'react'
 const { ipcRenderer } = window.require('electron')
 
-
+/**
+ * ipcRenderer 的事件对象的注册和注销
+ * @param keyCallbackMap
+ */
 const useIpcRenderer = (keyCallbackMap) => {
   useEffect(() => {
     Object.keys(keyCallbackMap).forEach(key => {
