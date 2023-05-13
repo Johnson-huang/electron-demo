@@ -4,15 +4,15 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import "easymde/dist/easymde.min.css"
 
-// import { faPlus, faFileImport } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faFileImport } from '@fortawesome/free-solid-svg-icons'
 // import SimpleMDE from "react-simplemde-editor"
-// import uuidv4 from 'uuid/v4'
+import uuidv4 from 'uuid/v4'
 import { flattenArr, objToArr, timestampToString } from './utils/helper'
 import fileHelper from './utils/fileHelper'
 
 import FileSearch from "./components/FileSearch";
 import FileList from "./components/FileList";
-// import BottomBtn from './components/BottomBtn'
+import BottomBtn from './components/BottomBtn'
 // import TabList from './components/TabList'
 // import Loader from './components/Loader'
 
@@ -114,12 +114,114 @@ function App() {
         saveFilesToStore(newFiles)
       })
     }
-
   }
 
+  const createNewFile = () => {
+    const newID = uuidv4()
+    const newFile = {
+      id: newID,
+      title: '',
+      body: '## 请输出 Markdown',
+      createdAt: new Date().getTime(),
+      isNew: true,
+    }
+    setFiles({ ...files, [newID]: newFile })
+  }
+  const saveCurrentFile = () => {
+    const { path, body, title } = activeFile
+    fileHelper.writeFile(path, body).then(() => {
+      setUnsavedFileIDs(unsavedFileIDs.filter(id => id !== activeFile.id))
+      if (getAutoSync()) {
+        ipcRenderer.send('upload-file', {key: `${title}.md`, path })
+      }
+    })
+  }
+  const importFiles = () => {
+    remote.dialog.showOpenDialog({
+      title: '选择导入的 Markdown 文件',
+      properties: ['openFile', 'multiSelections'],
+      filters: [
+        {name: 'Markdown files', extensions: ['md']}
+      ]
+    }, (paths) => {
+      if (Array.isArray(paths)) {
+        const filteredPaths = paths.filter(path => {
+          const alreadyAdded = Object.values(files).find(file => {
+            return file.path === path
+          })
+          return !alreadyAdded
+        })
+        const importFilesArr = filteredPaths.map(path => {
+          return {
+            id: uuidv4(),
+            title: basename(path, extname(path)),
+            path,
+          }
+        })
+        // get the new files object in flattenArr
+        const newFiles = { ...files, ...flattenArr(importFilesArr)}
+        // setState and update electron store
+        setFiles(newFiles)
+        saveFilesToStore(newFiles)
+        if (importFilesArr.length > 0) {
+          remote.dialog.showMessageBox({
+            type: 'info',
+            title: `成功导入了${importFilesArr.length}个文件`,
+            message: `成功导入了${importFilesArr.length}个文件`,
+          })
+        }
+      }
+    })
+  }
+  const activeFileUploaded = () => {
+    const { id } = activeFile
+    const modifiedFile = { ...files[id], isSynced: true, updatedAt: new Date().getTime() }
+    const newFiles = { ...files, [id]: modifiedFile }
+    setFiles(newFiles)
+    saveFilesToStore(newFiles)
+  }
+  const activeFileDownloaded = (event, message) => {
+    const currentFile = files[message.id]
+    const { id, path } = currentFile
+    fileHelper.readFile(path).then(value => {
+      let newFile
+      if (message.status === 'download-success') {
+        newFile = { ...files[id], body: value, isLoaded: true, isSynced: true, updatedAt: new Date().getTime() }
+      } else {
+        newFile = { ...files[id], body: value, isLoaded: true}
+      }
+      const newFiles = { ...files, [id]: newFile }
+      setFiles(newFiles)
+      saveFilesToStore(newFiles)
+    })
+  }
+  const filesUploaded = () => {
+    const newFiles = objToArr(files).reduce((result, file) => {
+      const currentTime = new Date().getTime()
+      result[file.id] = {
+        ...files[file.id],
+        isSynced: true,
+        updatedAt: currentTime,
+      }
+      return result
+    }, {})
+    setFiles(newFiles)
+    saveFilesToStore(newFiles)
+  }
+
+  useIpcRenderer({
+    'create-new-file': createNewFile,
+    'import-file': importFiles,
+    'save-edit-file': saveCurrentFile,
+    'active-file-uploaded': activeFileUploaded,
+    'file-downloaded': activeFileDownloaded,
+    'files-uploaded': filesUploaded,
+    'loading-status': (message, status) => { setLoading(status) }
+  })
+
   return (
-    <div className="App container-fluid">
-      <div className="row">
+    <div className="App container-fluid px-0">
+      <div className="row no-gutters">
         <div className="col-3 bg-light left-panel">
           <FileSearch
             title='My Document'
@@ -131,6 +233,24 @@ function App() {
               onFileDelete={deleteFile}
               onSaveEdit={updateFileName}
           />
+          <div className="row no-gutters button-group">
+            <div className="col">
+              <BottomBtn
+                  text="新建"
+                  colorClass="btn-primary"
+                  icon={faPlus}
+                  onBtnClick={createNewFile}
+              />
+            </div>
+            <div className="col">
+              <BottomBtn
+                  text="导入"
+                  colorClass="btn-success"
+                  icon={faFileImport}
+                  onBtnClick={importFiles}
+              />
+            </div>
+          </div>
         </div>
         <div className="col-9 bg-primary right-panel">
           <h1>right</h1>
