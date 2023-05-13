@@ -19,7 +19,6 @@ const useKeyPress = (targetKeyCode) => {
     }
   }, [targetKeyCode])
   useEffect(() => {
-    console.log('useEffect')
     document.addEventListener('keydown', keyDownHandler)
     document.addEventListener('keyup', keyUpHandler)
     return () => {
