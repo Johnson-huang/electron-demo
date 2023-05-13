@@ -2,10 +2,10 @@ import { useState } from 'react'
 
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import "easymde/dist/easymde.min.css"
+import "easymde/dist/easymde.min.css"
 
 import { faPlus, faFileImport } from '@fortawesome/free-solid-svg-icons'
-// import SimpleMDE from "react-simplemde-editor"
+import SimpleMDE from "react-simplemde-editor"
 import uuidv4 from 'uuid/v4'
 import { flattenArr, objToArr, timestampToString } from './utils/helper'
 import fileHelper from './utils/fileHelper'
@@ -13,8 +13,8 @@ import fileHelper from './utils/fileHelper'
 import FileSearch from "./components/FileSearch";
 import FileList from "./components/FileList";
 import BottomBtn from './components/BottomBtn'
-// import TabList from './components/TabList'
-// import Loader from './components/Loader'
+import TabList from './components/TabList'
+import Loader from './components/Loader'
 
 import useIpcRenderer from './hooks/useIpcRenderer'
 
@@ -209,6 +209,34 @@ function App() {
     saveFilesToStore(newFiles)
   }
 
+  const tabClick = (fileID) => {
+    // set current active file
+    setActiveFileID(fileID)
+  }
+
+  const tabClose = (id) => {
+    //remove current id from openedFileIDs
+    const tabsWithout = openedFileIDs.filter(fileID => fileID !== id)
+    setOpenedFileIDs(tabsWithout)
+    // set the active to the first opened tab if still tabs left
+    if (tabsWithout.length > 0) {
+      setActiveFileID(tabsWithout[0])
+    } else {
+      setActiveFileID('')
+    }
+  }
+
+  const fileChange = (id, value) => {
+    if (value !== files[id].body) {
+      const newFile = { ...files[id], body: value }
+      setFiles({ ...files, [id]: newFile })
+      // update unsavedIDs
+      if (!unsavedFileIDs.includes(id)) {
+        setUnsavedFileIDs([ ...unsavedFileIDs, id])
+      }
+    }
+  }
+
   useIpcRenderer({
     'create-new-file': createNewFile,
     'import-file': importFiles,
@@ -221,6 +249,9 @@ function App() {
 
   return (
     <div className="App container-fluid px-0">
+      { isLoading &&
+          <Loader />
+      }
       <div className="row no-gutters">
         <div className="col-3 bg-light left-panel">
           <FileSearch
@@ -253,7 +284,33 @@ function App() {
           </div>
         </div>
         <div className="col-9 bg-primary right-panel">
-          <h1>right</h1>
+          { !activeFile &&
+              <div className="start-page">
+                选择或者创建新的 Markdown 文档
+              </div>
+          }
+          { activeFile &&
+              <>
+                <TabList
+                    files={openedFiles}
+                    activeId={activeFileID}
+                    unsaveIds={unsavedFileIDs}
+                    onTabClick={tabClick}
+                    onCloseTab={tabClose}
+                />
+                <SimpleMDE
+                    key={activeFile && activeFile.id}
+                    value={activeFile && activeFile.body}
+                    onChange={(value) => {fileChange(activeFile.id, value)}}
+                    options={{
+                      minHeight: '515px',
+                    }}
+                />
+                { activeFile.isSynced &&
+                    <span className="sync-status">已同步，上次同步{timestampToString(activeFile.updatedAt)}</span>
+                }
+              </>
+          }
         </div>
       </div>
     </div>
