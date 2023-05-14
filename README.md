@@ -2,6 +2,8 @@
 ## 技术栈
 - Electron v24
 - React v18
+- bootstrap
+- node-sass
 
 ## 开发环境
 - electron-is-dev：判断是否开发环境
@@ -12,6 +14,6 @@
 - cross-env：跨平台设置环境变量
 - nodemon：nodejs 代码热更新
 
-## 第三方库
-- bootstrap
+## 工具库
 - fontawesome：svg 库
+- classnames：class 拼接
