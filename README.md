@@ -17,3 +17,4 @@
 ## 工具库
 - fontawesome：svg 库
 - classnames：class 拼接
+- electron-store：数据持久化方案，以本地文件的方式存储数据
