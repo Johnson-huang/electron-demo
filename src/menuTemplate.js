@@ -1,5 +1,6 @@
 /**
  * 顶部系统菜单
+ * 只能在主进程中进行
  */
 const { app, shell, ipcMain } = require('electron')
 const Store = require('electron-store')
