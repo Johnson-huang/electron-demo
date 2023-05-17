@@ -1,3 +1,6 @@
+/**
+ * 顶部系统菜单
+ */
 const { app, shell, ipcMain } = require('electron')
 const Store = require('electron-store')
 const settingsStore = new Store({ name: 'Settings'})
@@ -90,7 +93,7 @@ let template = [{
     label: '从云端下载到本地',
     enabled: qiniuIsConfiged,
     click: () => {
-      
+
     }
   }]
 },

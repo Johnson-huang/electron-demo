@@ -1,3 +1,6 @@
+/**
+ * 右键菜单
+ */
 import { useEffect, useRef } from 'react'
 const { remote } = window.require('electron')
 const { Menu, MenuItem } = remote
