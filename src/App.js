@@ -6,7 +6,7 @@ import "easymde/dist/easymde.min.css"
 
 import { faPlus, faFileImport } from '@fortawesome/free-solid-svg-icons'
 import SimpleMDE from "react-simplemde-editor"
-import uuidv4 from 'uuid/v4'
+import uuidv4 from 'uuid/dist/v4'
 import { flattenArr, objToArr, timestampToString } from './utils/helper'
 import fileHelper from './utils/fileHelper'
 
